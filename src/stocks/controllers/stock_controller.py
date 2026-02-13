@@ -13,8 +13,11 @@ def set_stock(request):
     payload = request.get_json() or {}
     product_id = payload.get('product_id')
     quantity = payload.get('quantity')
+    name = payload.get('name')
+    sku = payload.get('sku')
+    price = payload.get('price')
     try:
-        result = set_stock_for_product(product_id, quantity)
+        result = set_stock_for_product(product_id, quantity, name, sku, price)
         return jsonify({'result': result}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500

@@ -88,8 +88,20 @@ def update_stock_redis(order_items, operation):
                 new_quantity = current_stock + quantity
             else:  
                 new_quantity = current_stock - quantity
-            
+
             pipeline.hset(f"stock:{product_id}", "quantity", new_quantity)
+
+    product_keys = list(r.scan_iter("product:*"))
+    if product_keys:
+        pipeline = r.pipeline()
+        for item in order_items:
+            name = r.hget(f"product:{item['product_id']}", "name")
+            sku = r.hget(f"product:{item['product_id']}", "sku")
+            price = r.hget(f"product:{item['product_id']}", "price")
+        
+            pipeline.hset(f"product:{product_id}", "name", name)
+            pipeline.hset(f"product:{product_id}", "sku", sku)
+            pipeline.hset(f"product:{product_id}", "price", price)
         
         pipeline.execute()
     
